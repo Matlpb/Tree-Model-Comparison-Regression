@@ -1,0 +1,2 @@
+Model,Best_Params,Best_Score,Validation_MSE,Validation_R2
+random_forest,"{'max_features': None, 'min_samples_split': 5, 'n_estimators': 100}",893672844.2994642,162848600.68592298,0.9741788394391052

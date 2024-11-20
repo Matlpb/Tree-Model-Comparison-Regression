@@ -1,0 +1,2 @@
+Model,Best_Params,Best_Score,Validation_MSE,Validation_R2
+adaboost,"{'learning_rate': 0.1, 'n_estimators': 200}",1228368160.6033208,822608858.3851534,0.8695677130677762

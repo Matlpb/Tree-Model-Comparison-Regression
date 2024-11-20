@@ -1,0 +1,2 @@
+Model,Best_Params,Best_Score,Validation_MSE,Validation_R2
+xgboost,"{'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}",733230067.5547193,74919579.00088762,0.9881207942962646
