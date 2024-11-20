@@ -20,20 +20,25 @@ To get started with the project, you need to install the necessary dependencies.
    cd Tree-Model-Comparison-Regression
 
 2. **Create a virtual environment:**
+   
+   ```bash
    python3 -m venv venv
 
 On macOS/Linux:
-
+```bash
 source venv/bin/activate
 
 On Windows:
-
+```bash
 .\venv\Scripts\activate
 
 ## Dependencies
+
+   ```bash
    pip install -r requirements.txt
 
 ## Usage
+   ```bash
    python main.py
 
 
