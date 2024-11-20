@@ -25,10 +25,11 @@ To get started with the project, you need to install the necessary dependencies.
    python3 -m venv venv
 
 On macOS/Linux:
+
 source venv/bin/activate
 
 On Windows:
-```bash
+
 .\venv\Scripts\activate
 
 ## Dependencies
@@ -38,7 +39,6 @@ On Windows:
 
 ## Usage
 
-   ```bash
    python main.py
 
 
