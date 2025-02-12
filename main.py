@@ -16,24 +16,33 @@ def main():
     competition_name = "house-prices-advanced-regression-techniques"
     df_train, df_test = load_dataframes(project_dir, competition_name)
 
-    # Charger le fichier qualitative_max_params.pkl
-    params_path = os.path.join(base_dir, "transformer_params", "quantitative_max_params.pkl")
-    if os.path.exists(params_path):
-        with open(params_path, "rb") as f:
-            qualitative_max_params = pickle.load(f)
-        print("\n✅ Contenu de qualitative_max_params.pkl :")
-        print(qualitative_max_params)
-    else:
-        print("\n⚠️ Fichier qualitative_max_params.pkl non trouvé !")
 
-    # Séparer les caractéristiques (X) et la cible (y)
     X = df_train.drop(columns=['SalePrice', 'Id'])
     y = df_train['SalePrice']
 
     # Appliquer ApplyTransforms sur l'ENSEMBLE des données AVANT le split
-    transformer = ApplyTransforms(save_dir=os.path.join(base_dir, "transformer_params"))
+    saving_mode=False 
+    transformer = ApplyTransforms(save_dir=os.path.join(base_dir, "transformer_params"), saving_mode=saving_mode)
     X_encoded = transformer.fit_transform(X)
 
+    if not transformer.saving_mode:
+        print("Transformation Rules:")
+        print(transformer.transformation_rules)  # Afficher les règles de transformation
+
+        print("\nQuantitative Min Params:")
+        print(transformer.quantitative_min_params)  # Afficher les paramètres quantitatifs_min
+
+        print("\nQuantitative Max Params:")
+        print(transformer.quantitative_max_params)  # Afficher les paramètres quantitatifs_max
+
+        print("\nQualitative Min Params:")
+        print(transformer.qualitative_min_params)  # Afficher les paramètres qualitatifs_min
+
+        print("\nQualitative Max Params:")
+        print(transformer.qualitative_max_params)
+
+    
+    
     # Split après transformation
     X_train_encoded, X_test_encoded, y_train, y_test = train_test_split(
         X_encoded, y, test_size=0.2, random_state=42

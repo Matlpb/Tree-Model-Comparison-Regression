@@ -37,6 +37,14 @@ class MinMaxScalerTransformer(BaseEstimator, TransformerMixin):
         # Sauvegarder les paramètres (min, max) pour chaque colonne
         with open(filepath, 'wb') as f:
             pickle.dump({'X_min': self.X_min, 'X_max': self.X_max}, f)
+        
+    def load_params(self, filepath):
+        """Charge les valeurs min et max à partir du fichier."""
+        with open(filepath, 'rb') as f:
+            params = pickle.load(f)
+            self.min_values = params.get('X_min', {})
+            self.max_values = params.get('X_max', {})
+        return params 
 
 
 class FrequencyEncoderTransformer(BaseEstimator, TransformerMixin):
@@ -61,6 +69,11 @@ class FrequencyEncoderTransformer(BaseEstimator, TransformerMixin):
         # Sauvegarder les encodages de fréquence
         with open(filepath, 'wb') as f:
             pickle.dump(self.encoding, f)
+
+    def load_params(self, filepath):
+        # Charger les encodages de fréquence à partir du fichier
+        with open(filepath, 'rb') as f:
+            self.encoding = pickle.load(f)
 
 
 
@@ -108,4 +121,9 @@ class OneHotEncoderTransformer(BaseEstimator, TransformerMixin):
         """Sauvegarde les colonnes générées par One-Hot Encoding."""
         with open(filepath, 'wb') as f:
             pickle.dump(self.columns_, f)
+
+    def load_params(self, filepath):
+        """Charge les colonnes générées par One-Hot Encoding à partir du fichier."""
+        with open(filepath, 'rb') as f:
+            self.columns_ = pickle.load(f)
 
