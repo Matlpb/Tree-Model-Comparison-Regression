@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testez le Modèle de Prédiction</title>
+    <script>
+        function submitForm() {
+            const formData = new FormData(document.getElementById("prediction-form"));
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            // Convertir les données en JSON et envoyer la requête
+            fetch('/predict/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('prediction_result').innerText = "Prediction: " + data.prediction;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Testez le Modèle de Prédiction</h1>
+    <form id="prediction-form" onsubmit="event.preventDefault(); submitForm();">
+        <h2>Entrez les données pour la prédiction :</h2>
+
+        <!-- Sélectionner le modèle -->
+        <label for="model_selection">Sélectionnez le modèle :</label>
+        <select id="model_selection" name="model_selection" required>
+            <option value="extra_trees">Extra Trees</option>
+            <option value="gradient_boosting">Gradient Boosting</option>
+        </select>
+        <br><br>
+
+        <!-- Formulaire pour chaque colonne de données -->
+        <div>
+            <label for="MSSubClass">MSSubClass:</label>
+            <input type="number" id="MSSubClass" name="MSSubClass" step="any">
+        </div>
+        <div>
+            <label for="MSZoning">MSZoning:</label>
+            <select id="MSZoning" name="MSZoning">
+                <option value="RL">RL</option>
+                <option value="RM">RM</option>
+                <option value="FV">FV</option>
+                <!-- Ajoutez d'autres options selon les données possibles -->
+            </select>
+        </div>
+        <div>
+            <label for="LotFrontage">LotFrontage:</label>
+            <input type="number" id="LotFrontage" name="LotFrontage" step="any">
+        </div>
+        <div>
+            <label for="LotArea">LotArea:</label>
+            <input type="number" id="LotArea" name="LotArea" step="any">
+        </div>
+        <div>
+            <label for="Street">Street:</label>
+            <select id="Street" name="Street">
+                <option value="Pave">Pave</option>
+                <option value="Grvl">Grvl</option>
+            </select>
+        </div>
+        <div>
+            <label for="Alley">Alley:</label>
+            <select id="Alley" name="Alley">
+                <option value="NA">NA</option>
+                <option value="Grvl">Grvl</option>
+                <option value="Pave">Pave</option>
+            </select>
+        </div>
+        <div>
+            <label for="LotShape">LotShape:</label>
+            <select id="LotShape" name="LotShape">
+                <option value="Reg">Reg</option>
+                <option value="IR1">IR1</option>
+                <option value="IR2">IR2</option>
+                <option value="IR3">IR3</option>
+            </select>
+        </div>
+
+        <br>
+        <button type="submit">Obtenir la Prédiction</button>
+    </form>
+
+    <h2>Résultat de la Prédiction :</h2>
+    <div id="prediction_result"></div>
+
+</body>
+</html>
