@@ -6,32 +6,40 @@ from sklearn.preprocessing import MinMaxScaler
 class MinMaxScalerTransformer(BaseEstimator, TransformerMixin):
     """Applique MinMaxScaler aux colonnes spécifiées, en sauvegardant les min et max pour chaque colonne."""
     
-    def __init__(self, cols, feature_range=(0, 1)):
+    def __init__(self, cols, feature_range=(0, 1), X_min=None, X_max=None):
         self.cols = cols
         self.feature_range = feature_range
-        self.X_min = {}
-        self.X_max = {}
+        self.X_min = X_min if X_min is not None else {}
+        self.X_max = X_max if X_max is not None else {}
 
     def fit(self, X, y=None):
-        # Sauvegarder les valeurs minimales et maximales pour chaque colonne spécifiée
-        for col in self.cols:
-            self.X_min[col] = X[col].min()
-            self.X_max[col] = X[col].max()
+        """Si X_min et X_max ne sont pas fournis, les calculer à partir de X."""
+        if not self.X_min or not self.X_max:
+            for col in self.cols:
+                self.X_min[col] = X[col].min()
+                self.X_max[col] = X[col].max()
         return self
 
     def transform(self, X):
         X_transformed = X.copy()
         
-        # Appliquer la normalisation en utilisant les min et max enregistrés
         for col in self.cols:
-            X_transformed[col] = (X_transformed[col] - self.X_min[col]) / (self.X_max[col] - self.X_min[col])
-            # Appliquer la mise à l'échelle en fonction de feature_range
-            X_transformed[col] = X_transformed[col] * (self.feature_range[1] - self.feature_range[0]) + self.feature_range[0]
-            
-            # Remplir les valeurs manquantes par 0
+            X_transformed[col] = pd.to_numeric(X_transformed[col], errors="coerce")  # 🔥 Convertir en numérique
+            min_val = self.X_min[col]
+            max_val = self.X_max[col]
+
+            # ⚠️ Éviter la division par zéro si min = max
+            if min_val == max_val:
+                X_transformed[col] = 0
+            else:
+                X_transformed[col] = (X_transformed[col] - min_val) / (max_val - min_val)
+                X_transformed[col] = X_transformed[col] * (self.feature_range[1] - self.feature_range[0]) + self.feature_range[0]
+
+            # Remplacer les NaN par 0
             X_transformed[col] = X_transformed[col].fillna(0)
 
         return X_transformed
+
     
     def save_params(self, filepath):
         # Sauvegarder les paramètres (min, max) pour chaque colonne

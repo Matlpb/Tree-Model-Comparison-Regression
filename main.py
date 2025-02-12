@@ -21,7 +21,7 @@ def main():
     y = df_train['SalePrice']
 
     # Appliquer ApplyTransforms sur l'ENSEMBLE des données AVANT le split
-    saving_mode=False 
+    saving_mode=True 
     transformer = ApplyTransforms(save_dir=os.path.join(base_dir, "transformer_params"), saving_mode=saving_mode)
     X_encoded = transformer.fit_transform(X)
 
