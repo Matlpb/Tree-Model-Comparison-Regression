@@ -57,6 +57,21 @@
                         input.setAttribute("min", bounds[field].min);
                         input.setAttribute("max", bounds[field].max);
                         label.innerText = `(Min: ${bounds[field].min}, Max: ${bounds[field].max})`;
+
+                        // Add onfocus event to show bounds message
+                        input.onfocus = () => {
+                            alert(`Please fill a value in the bounds for ${field} (Min: ${bounds[field].min}, Max: ${bounds[field].max})`);
+                        };
+
+                        // Add oninput event to validate in real-time
+                        input.oninput = () => {
+                            const value = parseFloat(input.value);
+                            if (!isNaN(value) && (value < bounds[field].min || value > bounds[field].max)) {
+                                input.setCustomValidity(`Value must be between ${bounds[field].min} and ${bounds[field].max}`);
+                            } else {
+                                input.setCustomValidity('');
+                            }
+                        };
                     }
                 });
             })
@@ -66,7 +81,6 @@
         }
 
         window.onload = loadBounds;
-
     </script>
     <style>
         body {
@@ -307,7 +321,7 @@
             </select>
         </div>
 
-        <!-- New numeric columns -->
+       <!-- New numeric columns -->
         <div class="field-container">
             <label for="LotArea">LotArea:</label>
             <input type="number" id="LotArea" name="LotArea"/>
@@ -368,10 +382,9 @@
             <span class="bounds" id="OpenPorchSF_bounds"></span>
         </div>
 
-        <button type="submit">Submit</button>
+        <button type="submit">Predict</button>
     </form>
 
-    <p id="prediction_result"></p>
-
+    <h2 id="prediction_result"></h2>
 </body>
 </html>

@@ -6,4 +6,4 @@ def load_model(model_name: str):
     if os.path.exists(model_path):
         return joblib.load(model_path)
     else:
-        raise FileNotFoundError(f"Le modèle {model_name} n'a pas été trouvé!")
+        raise FileNotFoundError(f"The model {model_name} couldn't be found")

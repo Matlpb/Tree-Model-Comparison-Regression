@@ -9,15 +9,12 @@ import pandas as pd
 
 def predict_model(model, X_test: pd.DataFrame, y_test: pd.Series) -> None:
     """
-    Prédit les valeurs avec le modèle et affiche le MSE et R² score.
+    Predict values and display MSE and R² score.
     """
-    # Faire des prédictions sur l'ensemble de test
     y_pred = model.predict(X_test)
     
-    # Calculer le Mean Squared Error (MSE)
     mse = mean_squared_error(y_test, y_pred)
-    print(f"Mean Squared Error sur l'ensemble de test: {mse}")
+    print(f"Mean Squared Error on the testing set: {mse}")
     
-    # Calculer le R² score
     r2 = r2_score(y_test, y_pred)
-    print(f"R² score sur l'ensemble de test: {r2}")
+    print(f"R² score on the testing set: {r2}")

@@ -9,14 +9,14 @@ sys.path.append(str(Path(os.path.abspath('')).resolve().parents[0]))
 
 def ensure_directory_exists(directory: str) -> None:
     """
-    Assure que le répertoire spécifié existe. Le crée s'il n'existe pas.
+    Ensures that the specified directory exists. Creates it if it doesn't exist.
     """
     if not os.path.exists(directory):
         os.makedirs(directory)
 
 def download_and_extract_kaggle_data(competition: str, output_dir: str) -> None:
     """
-    Télécharge et extrait les fichiers de compétition dans le répertoire spécifié.
+    Downloads and extracts Kaggle competition files into the specified directory.
     """
     os.system(f"kaggle competitions download -c {competition} -p {output_dir}")
     
@@ -29,16 +29,15 @@ def download_and_extract_kaggle_data(competition: str, output_dir: str) -> None:
 
 def load_csv(file_path: str) -> pd.DataFrame:
     """
-    Charge un fichier CSV et retourne un DataFrame.
+    Loads a CSV file and returns a DataFrame.
     """
     return pd.read_csv(file_path)
 
 def load_dataframes(base_dir: str, competition_name: str) -> Tuple[Optional[pd.DataFrame], Optional[pd.DataFrame]]:
     """
-    Télécharge, extrait les données de la compétition Kaggle et charge 
-    les fichiers 'train.csv' et 'test.csv' dans des DataFrames.
+    Downloads, extracts Kaggle competition data and loads 'train.csv' and 'test.csv' files into DataFrames.
     """
-    data_dir = os.path.join(base_dir, "data")  # Sous-dossier "data"
+    data_dir = os.path.join(base_dir, "data")
     ensure_directory_exists(data_dir)
     download_and_extract_kaggle_data(competition_name, data_dir)
 
@@ -52,5 +51,3 @@ def load_dataframes(base_dir: str, competition_name: str) -> Tuple[Optional[pd.D
         df_test = load_csv(test_csv_path)
 
     return df_train, df_test
-
-
