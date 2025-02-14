@@ -121,9 +121,15 @@ train_columns = [
 ]
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Define the relative path for the 'data_test' directory within the base directory
 output_dir = os.path.join(base_dir, "data_test")
+
+# Create the 'data_test' directory if it doesn't already exist
 os.makedirs(output_dir, exist_ok=True)
 
+# Define the path for the output file (X_test_transformed.csv)
+output_file_path = os.path.join(output_dir, "X_test_transformed.csv")
 
 transformer.load_transformation_params()
 
@@ -144,34 +150,47 @@ formatted_one_hot = reformat_one_hot(qualitative_min_params)
 
 
 
-def transform_input_data(input_data: dict) -> pd.DataFrame:
+def transform_input_data(input_data) -> pd.DataFrame:
     """
-    Transforms the input data using the pre-defined transformer.
-    
+    Transforms the input data using the pre-defined transformer and saves the result to CSV.
+
     Args:
-        input_data (dict): The input data to be transformed.
+        input_data (dict or int): The input data to be transformed (either raw data or row number).
         
     Returns:
         pd.DataFrame: The transformed input data.
     """
     try:
-        input_df = pd.DataFrame([input_data], columns=train_columns)
-        print("Original data:", input_df)
+        # Check if input_data is a row number (int)
+        if isinstance(input_data, int):
+            # Load the test CSV file
+            test_file_path = "/Users/matthieu/Downloads/Tree-Model-Comparison-Regression-main/house_prices/data/test.csv"
+            df = pd.read_csv(test_file_path)
+            
+            if input_data < 1 or input_data > len(df):
+                raise HTTPException(status_code=400, detail="Row number out of range.")
+            
+            # Get the row data (adjusting for zero-based indexing)
+            row_data = df.iloc[input_data - 1].to_dict()
+            
+            # Convert the row data to DataFrame and transform
+            input_df = pd.DataFrame([row_data], columns=train_columns)
+        
+        else:
+            # Input data is raw data, not a row number
+            input_df = pd.DataFrame([input_data], columns=train_columns)
 
-
+        # Transform the data
         transformed_df = transformer.fit_transform(input_df)
         transformed_df = pd.DataFrame(transformed_df)
 
-        print("Transformed data:", transformed_df)
-        output_file_path = os.path.join(output_dir, "X_test_transformed.csv")
-        
+        # Save the transformed data to the CSV (overwrite the existing file)
         if os.path.exists(output_file_path):
-            print(f"\n⚠️ The file {output_file_path} already exists. It will be deleted and rewritten.")
             os.remove(output_file_path)
-        
+
         transformed_df.to_csv(output_file_path, index=False)
         print(f"\n✅ The file {output_file_path} has been successfully saved.")
-
+        
         return transformed_df
 
     except Exception as e:
@@ -179,7 +198,7 @@ def transform_input_data(input_data: dict) -> pd.DataFrame:
         raise HTTPException(status_code=500, detail="Error during transformation")
 
 @app.post("/predict/")
-async def predict(input_data: dict) -> dict:
+async def predict(input_data: dict):
     """
     Makes a prediction based on the input data.
 
@@ -192,8 +211,16 @@ async def predict(input_data: dict) -> dict:
     try:
         print("\n🔹 New request received:", input_data)
 
-        transformed_data = transform_input_data(input_data)
+        # Check if the input_data contains a row number or actual feature data
+        if isinstance(input_data.get('row_number'), int):
+            # If row_number is provided, use that to overwrite the CSV
+            row_number = input_data['row_number']
+            transformed_data = transform_input_data(row_number)
+        else:
+            # Otherwise, use the manual data entered
+            transformed_data = transform_input_data(input_data)
 
+        # Model selection and prediction
         model_selection = input_data.get('model_selection')
         if model_selection == 'extra_trees':
             print("\nUsing ExtraTrees model for prediction.")
@@ -206,7 +233,7 @@ async def predict(input_data: dict) -> dict:
 
         print(f"\n✅ Prediction: {prediction[0]}")
         return {"prediction": prediction[0]}
-    
+
     except Exception as e:
         print(f"\n❌ Error occurred: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))

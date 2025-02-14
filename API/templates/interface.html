@@ -185,6 +185,34 @@
             })
             .catch(error => console.error('Error:', error));
         }
+
+        function loadRowData() {
+            const rowNumber = document.getElementById('row_number').value;
+            if (rowNumber >= 1 && rowNumber <= 200) {
+                fetch(`/load_row/${rowNumber}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Automatically fill in the form fields with the data
+                            for (const key in data.row) {
+                                const element = document.getElementById(key);
+                                if (element) {
+                                    if (element.tagName === 'SELECT') {
+                                        element.value = data.row[key];
+                                    } else if (element.tagName === 'INPUT') {
+                                        element.value = data.row[key];
+                                    }
+                                }
+                            }
+                        } else {
+                            alert("Failed to load row data.");
+                        }
+                    })
+                    .catch(error => console.error('Error loading row data:', error));
+            } else {
+                alert("Please enter a valid row number between 1 and 200.");
+            }
+        }
     </script>
 </head>
 <body>
@@ -302,42 +330,13 @@
                 </table>
             </form>
         </div>
+
         <div class="input-container">
             <label for="row_number">Enter row number (1-200):</label>
             <input type="number" id="row_number" min="1" max="200" placeholder="Enter row number">
             <button type="button" onclick="loadRowData()">Load Row</button>
         </div>
-        
-        <script>
-            function loadRowData() {
-                const rowNumber = document.getElementById('row_number').value;
-                if (rowNumber >= 1 && rowNumber <= 200) {
-                    fetch(`/load_row/${rowNumber}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Automatically fill in the form fields with the data
-                                for (const key in data.row) {
-                                    const element = document.getElementById(key);
-                                    if (element) {
-                                        if (element.tagName === 'SELECT') {
-                                            element.value = data.row[key];
-                                        } else if (element.tagName === 'INPUT') {
-                                            element.value = data.row[key];
-                                        }
-                                    }
-                                }
-                            } else {
-                                alert("Failed to load row data.");
-                            }
-                        })
-                        .catch(error => console.error('Error loading row data:', error));
-                } else {
-                    alert("Please enter a valid row number between 1 and 200.");
-                }
-            }
-        </script>
-        
+
         <div class="model-selector">
             <label for="model_selector">Choose Model:</label>
             <select id="model_selector">
