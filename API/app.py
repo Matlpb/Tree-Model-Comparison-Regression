@@ -13,6 +13,7 @@ import pickle
 import pandas as pd
 from ETL.preprocessing import ApplyTransforms
 from engine.load_models import load_model
+from API.format_params_app import reformat_bounds, reformat_one_hot
 
 
 
@@ -26,15 +27,64 @@ async def serve_homepage(request: Request) -> HTMLResponse:
     """
     Renders the homepage template.
     """
-    return templates.TemplateResponse("interface.html", {"request": request, "quantitative_max_params": quantitative_max_params})
+    # Passer les données supplémentaires de quantitative_min_params au front-end
+    return templates.TemplateResponse("interface.html", {
+        "request": request,
+        "quantitative_max_params": formatted_bounds,
+        "qualitative_max_params": qualitative_max_params,
+        "quantitative_min_params": quantitative_min_params,
+        "qualitative_min_params": formatted_one_hot  # Ajout des données
+    })
 
-@app.get("/get_bounds/", response_class=JSONResponse)
-async def get_bounds() -> JSONResponse:
-    """
-    Returns the bounds for numeric fields.
-    """
-    return JSONResponse(quantitative_max_params)
 
+
+@app.get("/load_row/{row_number}")
+async def load_row(row_number: int):
+    """
+    Loads the specified row from the test CSV file and replaces it in the transformed CSV.
+    
+    Args:
+        row_number (int): The row number to load from the test CSV file.
+        
+    Returns:
+        dict: The transformed data for the specified row.
+    """
+    try:
+        # Path to your test CSV file
+        test_file_path = "/Users/matthieu/Downloads/Tree-Model-Comparison-Regression-main/house_prices/data/test.csv"
+        output_file_path = "/Users/matthieu/Downloads/Tree-Model-Comparison-Regression-main/API/data_test/X_test_transformed.csv"
+
+        # Load the data from the CSV file
+        df = pd.read_csv(test_file_path)
+
+        # Ensure the row number is within the valid range
+        if row_number < 1 or row_number > len(df):
+            raise HTTPException(status_code=400, detail="Row number out of range.")
+        
+        # Get the row data (adjusting for zero-based indexing)
+        row_data = df.iloc[row_number - 1]
+
+        # Sanitize problematic float values (NaN, Infinity)
+        for column in row_data.index:
+            if isinstance(row_data[column], float):
+                if pd.isna(row_data[column]) or row_data[column] == float('inf') or row_data[column] == float('-inf'):
+                    row_data[column] = None
+
+        # Convert the row to a DataFrame and apply transformations
+        row_df = pd.DataFrame([row_data], columns=df.columns)
+        
+        # Transform the row (using your transformer logic)
+        transformed_data = transformer.fit_transform(row_df)
+        
+        # Write transformed data to the output CSV, overwriting it
+        transformed_df = pd.DataFrame(transformed_data, columns=df.columns)
+        transformed_df.to_csv(output_file_path, index=False)
+        
+        return {"success": True, "message": "CSV has been overwritten with the transformed row."}
+
+    except Exception as e:
+        print(f"\n❌ Error occurred: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 extra_trees_model = load_model('extra_trees')
 gradient_boosting_model = load_model('gradient_boosting')
@@ -75,13 +125,24 @@ output_dir = os.path.join(base_dir, "data_test")
 os.makedirs(output_dir, exist_ok=True)
 
 
-def load_bounds():
-    path = Path(__file__).parent.parent / "ETL/transformer_params/quantitative_max_params.pkl"
-    with open(path, 'rb') as file:
-        quantitative_max_params = pickle.load(file)
-    return quantitative_max_params
+transformer.load_transformation_params()
 
-quantitative_max_params = load_bounds()
+quantitative_min_params = transformer.quantitative_min_params
+quantitative_max_params = transformer.quantitative_max_params
+qualitative_min_params = transformer.qualitative_min_params
+qualitative_max_params = transformer.qualitative_max_params
+
+
+X_min = quantitative_max_params.get('X_min', {})
+X_max = quantitative_max_params.get('X_max', {})
+
+# Réorganiser les bornes
+formatted_bounds = reformat_bounds(X_min, X_max)
+formatted_one_hot = reformat_one_hot(qualitative_min_params)
+
+
+
+
 
 def transform_input_data(input_data: dict) -> pd.DataFrame:
     """

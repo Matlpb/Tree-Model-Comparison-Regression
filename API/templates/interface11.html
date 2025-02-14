@@ -388,3 +388,342 @@
     <h2 id="prediction_result"></h2>
 </body>
 </html>
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+good version  for min max
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 900px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .input-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .hint {
+            display: none;
+            font-size: 12px;
+            color: red;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 80%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .model-selector, .submit-btn {
+            margin-top: 20px;
+            text-align: center;
+        }
+        select {
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        #prediction-result {
+            font-size: 16px;
+            font-weight: bold;
+            margin-left: 15px;
+            color: #333;
+        }
+    </style>
+    <script>
+        function showHint(colName) {
+            document.getElementById(colName + '_hint').style.display = 'block';
+        }
+        function hideHint(colName) {
+            document.getElementById(colName + '_hint').style.display = 'none';
+        }
+        function submitAllData() {
+            let data = {};
+            let valid = true;
+            document.querySelectorAll('input[type=number]').forEach(input => {
+                const colName = input.id;
+                const value = parseFloat(input.value);
+                const min = parseFloat(input.getAttribute('data-min'));
+                const max = parseFloat(input.getAttribute('data-max'));
+                if (value < min || value > max) {
+                    alert(`Please enter a value for ${colName} between ${min} and ${max}`);
+                    valid = false;
+                } else {
+                    data[colName] = value;
+                }
+            });
+            if (!valid) return;
+            data['model_selection'] = document.getElementById("model_selector").value;
+            fetch('/predict/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('prediction-result').innerText = 'Prediction: ' + data.prediction;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Enter Values for Columns</h1>
+        <form id="inputForm">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column Name</th>
+                        <th>Input Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for col, bounds in quantitative_max_params.items() %}
+                        <tr>
+                            <td>{{ col }}</td>
+                            <td>
+                                <div class="input-container">
+                                    <span class="hint" id="{{ col }}_hint">Please enter a value between {{ bounds.min }} and {{ bounds.max }}</span>
+                                    <input type="number" id="{{ col }}" name="{{ col }}" 
+                                           data-min="{{ bounds.min }}" data-max="{{ bounds.max }}"
+                                           onfocus="showHint('{{ col }}')" onblur="hideHint('{{ col }}')" required>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+        <div class="model-selector">
+            <label for="model_selector">Choose Model:</label>
+            <select id="model_selector">
+                <option value="extra_trees">Extra Trees</option>
+                <option value="gradient_boosting">Gradient Boosting</option>
+            </select>
+        </div>
+        <div class="submit-btn">
+            <button type="button" onclick="submitAllData()">Predict</button>
+            <span id="prediction-result"></span>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+good version  for frequency
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface</title>
+    <style>
+        .value-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .value-table th, .value-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .value-table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .input-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .value-dropdown {
+            width: 80%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .manual-input {
+            margin-top: 10px;
+            padding: 8px;
+            width: 80%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .value-info {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #555;
+        }
+    </style>
+    <script>
+        function handleSelectionChange(colName) {
+            const inputField = document.getElementById(colName + "_manual_input");
+            const selectMenu = document.getElementById(colName + "_dropdown");
+            const valueInfo = document.getElementById(colName + "_value_info");
+
+            if (selectMenu.value === "other") {
+                inputField.style.display = "block";
+                valueInfo.style.display = "none";
+            } else {
+                inputField.style.display = "none";
+                valueInfo.style.display = "block";
+
+                // Affichage du pourcentage des occurrences
+                const selectedValue = selectMenu.value;
+                const occurrences = selectMenu.selectedOptions[0].getAttribute("data-occurrence");
+
+                // Calcul du pourcentage et formatage
+                const percentage = (parseFloat(occurrences) * 100).toFixed(2);
+                valueInfo.innerHTML = "Selected Value: " + selectedValue + " --> " + percentage + "%";
+            }
+        }
+
+        function submitAllData() {
+            let data = {};
+            let valid = true;
+            document.querySelectorAll('input[type=number]').forEach(input => {
+                const colName = input.id;
+                const value = parseFloat(input.value);
+                const min = parseFloat(input.getAttribute('data-min'));
+                const max = parseFloat(input.getAttribute('data-max'));
+                if (value < min || value > max) {
+                    alert(`Please enter a value for ${colName} between ${min} and ${max}`);
+                    valid = false;
+                } else {
+                    data[colName] = value;
+                }
+            });
+            if (!valid) return;
+            data['model_selection'] = document.getElementById("model_selector").value;
+            fetch('/predict/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('prediction-result').innerText = 'Prediction: ' + data.prediction;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Enter Values for Columns</h1>
+        <form id="inputForm">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column Name</th>
+                        <th>Input Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Boucle sur les paramètres quantitatives min -->
+                    {% for col, values in quantitative_min_params.items() %}
+                        <tr>
+                            <td>{{ col }}</td>
+                            <td>
+                                <div class="input-container">
+                                    <!-- Menu déroulant avec les valeurs possibles -->
+                                    <select id="{{ col }}_dropdown" class="value-dropdown" onchange="handleSelectionChange('{{ col }}')">
+                                        <option value="">Select a Value</option>
+                                        {% for value, occurrence in values.items() %}
+                                            <!-- Ajout de l'attribut data-occurrence pour chaque valeur -->
+                                            <option value="{{ value }}" data-occurrence="{{ occurrence }}">{{ value }} ({{ (occurrence * 100)|round(2) }}%)</option>
+                                        {% endfor %}
+                                        <option value="other">Other...</option>
+                                    </select>
+
+                                    <!-- Champ manuel caché au départ -->
+                                    <input type="number" id="{{ col }}_manual_input" class="manual-input" style="display: none;" placeholder="Enter a value">
+                                    
+                                    <!-- Affichage des informations supplémentaires à côté du champ -->
+                                    <div id="{{ col }}_value_info" class="value-info" style="display: none;"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+        <div class="model-selector">
+            <label for="model_selector">Choose Model:</label>
+            <select id="model_selector">
+                <option value="extra_trees">Extra Trees</option>
+                <option value="gradient_boosting">Gradient Boosting</option>
+            </select>
+        </div>
+        <div class="submit-btn">
+            <button type="button" onclick="submitAllData()">Predict</button>
+            <span id="prediction-result"></span>
+        </div>
+    </div>
+</body>
+</html>
