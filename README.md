@@ -1,7 +1,7 @@
 # Tree Model Comparison Regression
 
-This repository contains an API to make predictions on a given data set (here house prices in kaggle). The user can either propose a datas of its choice for test, or fill a number that will load the corresponding line in the testing fill. The 
-API will provide a prediction for the model used.
+This repository contains an API to make predictions on a given data set (here house prices in kaggle). The user can either propose a datas of its choice for test with respect to the original data set of train, or fill a number that will load the corresponding line in the testing file. The 
+API will provide a prediction for the model used. The user can check the embedding of his testing data set (either if is preloaded, or choose by the user), inth efile "X_test_transfromed.csv". This fill will be overwrite each time that the user change the input data.
 If the user wants so, he can retrain models, for that he has to delete the following folder of the repertory: models
 
 He can also delete folders : house_prices/data, transformer_params, data_test
@@ -15,8 +15,6 @@ if he runs python main.py the following will be downloaded, then run commands to
 - [License](#license)
 
 ## Installation
-
-To get started with the project, you need to install the necessary dependencies. Follow these steps to set up your environment.
 
 1. **Clone the repository:**
 
