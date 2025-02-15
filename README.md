@@ -1,6 +1,11 @@
 # Tree Model Comparison Regression
 
-This repository contains a collection of regression models using different tree-based algorithms for predicting house prices. The goal is to compare the performance of various tree-based regression models such as Random Forest, Extra Trees, AdaBoost, and XGBoost.
+This repository contains an API to make predictions on a given data set (here house prices in kaggle). The user can either propose a datas of its choice for test, or fill a number that will load the corresponding line in the testing fill. The 
+API will provide a prediction for the model used.
+If the user wants so, he can retrain models, for that he has to delete the following folder of the repertory: models
+
+He can also delete folders : house_prices/data, transformer_params, data_test
+if he runs python main.py the following will be downloaded, then run commands to lauch the API
 
 ## Table of Contents
 - [Installation](#installation)
@@ -20,31 +25,53 @@ To get started with the project, you need to install the necessary dependencies.
    cd Tree-Model-Comparison-Regression
    ```
 
-2. **Create a virtual environment:**
+2. **Launch the API with the following command lines:**
    
    ```bash
-   python3 -m venv venv
+   Use python 3.10.16
+
+   if you are on mac os/linux :
+
+   chmod +x start_api.sh
+   ./start_api.sh
+
+
+   if it does not work, try
+    
+   source venv/bin/activate
+   ./start_api.sh
+
+   On windows
+
+   .\venv\Scripts\activate
+   double click on the file start_api.bat
+
+   if it does not work, try
+   uvicorn API.app:app --reload
+
+
+
+   It might take a few seconds either to install dependencies, and also for launching the API. 
+   Then copie paste the link in a browser
+
+
+
    ```
 
-### On macOS/Linux:
 
-```bash
-source venv/bin/activate
-```
-
-### On Windows:
-
-```bash
-.\venv\Scripts\activate
-```
-## Dependencies
-
+## Training
    ```bash
+   On mac os/linux
+
+   source venv/bin/activate
    pip install -r requirements.txt
-   ```
 
-## Usage
-   ```bash
+   On windows
+
+   .\venv\Scripts\activate
+   pip install -r requirements.txt
+
+
    python main.py
    ```
 

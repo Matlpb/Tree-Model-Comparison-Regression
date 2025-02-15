@@ -4,9 +4,6 @@ from typing import Any, Dict, Tuple
 import pandas as pd
 
 
-
-
-
 def predict_model(model, X_test: pd.DataFrame, y_test: pd.Series) -> None:
     """
     Predict values and display MSE and R² score.
