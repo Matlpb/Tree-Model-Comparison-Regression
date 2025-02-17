@@ -4,7 +4,7 @@ This repository contains an API to make predictions on a given dataset (here, ho
 
 The user can check the embedding of their testing dataset (whether it is preloaded or chosen by the user) in the file `X_test_transformed.csv`. This file will be overwritten each time the user changes the input data.
 
-## Model Training
+Model Training :
 If the user wants, they can retrain models.
 
 For further details on how the API works, follow the instructions below.
@@ -47,13 +47,18 @@ source venv/bin/activate
 #### On Windows:
 
 ```bash
-.\venv\Scripts\activate
 double click on the file start_api.bat
 ```
 
 If it does not work, try:
-
 ```bash
+start start_api.bat
+```
+Else: 
+```bash
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
 uvicorn API.app:app --reload
 ```
 
@@ -97,11 +102,11 @@ In the code, the seed has been set, so the training results will always be the s
 
 ### 3. Use the API
 
-Enter the data of your choice on the interface. The required fields and their types will be indicated, preventing incorrect data input. Any columns left unfilled will be set as NaN and then encoded as 0 in the file `X_test_transformed.csv`. The user can choose the model for prediction and then click on "Predict."
+The user can enter their own data on the interface. The required fields and their types will be displayed, preventing incorrect data input. Any columns left unfilled will be set as NaN and encoded as 0 in the file X_test_transformed.csv. The user can then select the model for prediction and click on "Predict."
 
-If the user does not want to enter data manually, they can input a number at the end of the form (corresponding to the number of the line in the "test.csv" file), click "Load Raw," choose the model, and then click "Predict."
+If the user does not wish to enter data manually, they can input a number corresponding to a line in the "test.csv" file, click "Load Raw," select the model, and then click "Predict."
 
-If the user initially enters a number but later wants to input custom data, they should delete the field "Enter a number between 1-1450," click "Load Raw," enter the desired data, and then click "Predict."
+If the user initially enters a number but later wishes to input custom data, they can delete the field "Enter a number between 1-1450," click "Load Raw," enter the desired data, and then click "Predict."
 
 ## Contributing
 If you would like to contribute to this project, feel free to fork the repository, make changes, and submit a pull request. All contributions are welcome!
