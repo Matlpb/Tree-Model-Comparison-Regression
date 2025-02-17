@@ -46,9 +46,9 @@ source venv/bin/activate
 
 #### On Windows:
 
-```bash
-double click on the file start_api.bat
-```
+
+double click on the file `start_api.bat`
+
 
 If it does not work, try:
 ```bash
