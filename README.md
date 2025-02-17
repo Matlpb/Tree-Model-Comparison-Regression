@@ -94,6 +94,14 @@ python main.py
 
 In the code, the seed has been set, so the training results will always be the same as long as the seed remains unchanged.
 
+### 3. Use the API
+
+Enter the data of your choice on the interface. The required fields and their types will be indicated, preventing incorrect data input. Any columns left unfilled will be set as NaN and then encoded as 0 in the file `X_test_transformed.csv`. The user can choose the model for prediction and then click on "Predict."
+
+If the user does not want to enter data manually, they can input a number at the end of the form, click "Load Raw," choose the model, and then click "Predict."
+
+If the user initially enters a number but later wants to input custom data, they should delete the field "Enter a number between 1-1450," click "Load Raw," enter the desired data, and then click "Predict."
+
 ## Contributing
 If you would like to contribute to this project, feel free to fork the repository, make changes, and submit a pull request. All contributions are welcome!
 
