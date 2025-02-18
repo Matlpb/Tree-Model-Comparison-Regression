@@ -173,7 +173,7 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-house_prices
-transformer_params
-*.pkl
+!house_prices/
+!transformer_params/
+!*.pkl
 .DS_Store
