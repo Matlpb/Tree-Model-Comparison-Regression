@@ -175,5 +175,9 @@ cython_debug/
 
 !house_prices/
 !transformer_params/
+!Analysis/
 !*.pkl
+!*.csv
+!*.ipynb
+
 .DS_Store
