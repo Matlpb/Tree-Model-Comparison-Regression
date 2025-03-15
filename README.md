@@ -12,6 +12,7 @@ For further details on how the API works, follow the instructions below.
 ## Table of Contents
 - [Installation](#installation)
 - [Usage](#usage)
+- [Analysis](#analysis)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -107,6 +108,11 @@ The user can enter their own data on the interface. The required fields and thei
 If the user does not wish to enter data manually, they can input a number corresponding to a line in the "test.csv" file, click "Load Raw," select the model, and then click "Predict."
 
 If the user initially enters a number but later wishes to input custom data, they can delete the field "Enter a number between 1-1450," click "Load Raw," enter the desired data, and then click "Predict."
+
+## Analysis
+
+For an in-depth analysis of the model performance and prediction errors, you can check the notebook located in the "analysis" folder.
+This notebook includes visualizations, error distributions, and comparisons between different tree-based models.
 
 ## Contributing
 If you would like to contribute to this project, feel free to fork the repository, make changes, and submit a pull request. All contributions are welcome!
